@@ -1,64 +1,105 @@
-# Multi-frame tkinter application v2.3
+
 import tkinter as tk
 
-class SampleApp(tk.Tk):
-    def __init__(self):
-        tk.Tk.__init__(self)
-        self._frame = None
-        self.switch_frame(StartPage)
 
-    def switch_frame(self, frame_class):
-        """Destroys current frame and replaces it with a new one."""
-        new_frame = frame_class(self)
-        if self._frame is not None:
-            self._frame.destroy()
-        self._frame = new_frame
-        self._frame.pack()
+LARGE_FONT= ("Verdana", 12)
 
+
+class SeaofBTCapp(tk.Tk):
+
+    def __init__(self, *args, **kwargs):
+        
+        tk.Tk.__init__(self, *args, **kwargs)
+        container = tk.Frame(self)
+
+        container.pack(side="top", fill="both", expand = True)
+
+        container.grid_rowconfigure(0, weight=1)
+        container.grid_columnconfigure(0, weight=1)
+
+        self.frames = {}
+
+        for F in (StartPage, PageOne, PageTwo):
+
+            frame = F(container, self)
+
+            self.frames[F] = frame
+
+            frame.grid(row=0, column=0, sticky="nsew")
+
+        self.show_frame(StartPage)
+
+    def show_frame(self, cont):
+
+        frame = self.frames[cont]
+        frame.tkraise()
+
+        
 class StartPage(tk.Frame):
-    def __init__(self, app):
-        tk.Frame.__init__(self, app)
+
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self,parent)
         height = 550 
         width = 350
        
 
-        title = tk.Label(app, text = "Shruthik's Quiz Application",font=(None,20),)
+        title = tk.Label(self, text = "Shruthik's Quiz Application",font=(None,20),)
         title.place(x = (width/2 - 30),y = 40)
-        user_nameLabel = tk.Label(app, text = "Enter Username: ",font=(None,14))
+        user_nameLabel = tk.Label(self, text = "Enter Username: ",font=(None,14))
         user_nameLabel.place(x = (width/2 + 18),y = 90)
-        Username = tk.Entry(app, text="User Name")
+        Username = tk.Entry(self, text="User Name")
         Username.place(x = (width/2 - 18),y = 120)
-        passwordLabel = tk.Label(app, text = "Enter Password: ",font=(None,14))
+        passwordLabel = tk.Label(self, text = "Enter Password: ",font=(None,14))
         passwordLabel.place(x = (width/2 + 18),y = 175)
-        password = tk.Entry(app, text="Password")
+        password = tk.Entry(self, text="Password")
         password.place(x = (width/2 - 18),y = 210)
-        loginBtn = tk.Button(app, text="Log in", height = 3,
+        loginBtn = tk.Button(self, text="Log in", height = 3,
         width = 20, bg="red", command=None, highlightbackground="red" )
         loginBtn.place(x = (width/2 - 18),y = 250)
 
 
-        signup = tk.Button(app, text="Sign up", height = 3, 
-                width = 15, bg="red", command=lambda: app.switch_frame(SignUp), highlightbackground="lightblue")
+        signup = tk.Button(self, text="Sign up", height = 3, 
+                width = 15, bg="red",  command=lambda: controller.show_frame(PageOne), highlightbackground="lightblue")
         signup.place(x = (width/2 + 200),y = 270,)
 
 
-  
-        
-        #tk.Button(self, text="Open page one",
-                  #command=lambda: master.switch_frame(PageOne)).pack()
-        #tk.Button(self, text="Open page two",
-                  #command=lambda: master.switch_frame(PageTwo)).pack()
 
-class SignUp(tk.Frame):
-    def __init__(self, master):
-        tk.Frame.__init__(self, master)
+
+class PageOne(tk.Frame):
+
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        label = tk.Label(self, text="Page One!!!", font=LARGE_FONT)
+        label.pack(pady=10,padx=10)
+
+        button1 = tk.Button(self, text="Back to Home",
+                            command=lambda: controller.show_frame(StartPage))
+        button1.pack()
+
+        button2 = tk.Button(self, text="Page Two",
+                            command=lambda: controller.show_frame(PageTwo))
+        button2.pack()
+
+
+class PageTwo(tk.Frame):
+
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        label = tk.Label(self, text="Page Two!!!", font=LARGE_FONT)
+        label.pack(pady=10,padx=10)
+
+        button1 = tk.Button(self, text="Back to Home",
+                            command=lambda: controller.show_frame(StartPage))
+        button1.pack()
+
+        button2 = tk.Button(self, text="Page One",
+                            command=lambda: controller.show_frame(PageOne))
+        button2.pack()
         
-        tk.Label(self, text="This is page one").pack()
-        tk.Button(self, text="Return to start page",
-                  command=lambda: master.switch_frame(StartPage)).pack(fill="both",expand=True)
-if __name__ == "__main__":
-    app = SampleApp()
-    app.title("Shruthik's Quiz Application")
-    app.geometry("550x350")
-    app.resizable(False, False)
-    app.mainloop()
+
+
+app = SeaofBTCapp()
+app.title("Shruthik's Quiz Application")
+app.geometry("550x350")
+app.resizable(False, False)
+app.mainloop()
