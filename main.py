@@ -19,12 +19,21 @@ Username.place(x = (width/2 - 18),y = 120)
 passwordLabel = Label(app, text = "Enter Password: ",font=(None,14))
 passwordLabel.place(x = (width/2 + 18),y = 175)
 
-password = Entry(app, text="Password")
+password = Entry(app, text="Pcassword")
 password.place(x = (width/2 - 18),y = 210)
-
+def test():
+    print("test")
 loginBtn = Button(app, text="Log in", height = 3, 
-          width = 20, bg="blue")
+          width = 20, bg="red", command=test, highlightbackground="red" )
 loginBtn.place(x = (width/2 - 18),y = 250)
+
+
+signup = Button(app, text="Sign up", height = 3, 
+          width = 15, bg="red", command=test, highlightbackground="lightblue")
+signup.place(x = (width/2 + 200),y = 270)
+
+
+
 
 
 
