@@ -1,12 +1,12 @@
 
 import tkinter as tk
-
-
+from signup import PageOne
+from database import signInAccount
 LARGE_FONT= ("Verdana", 12)
-
-
-class SeaofBTCapp(tk.Tk):
-
+from menu import menuScreen
+import sqlite3
+class QuizApp(tk.Tk):
+    
     def __init__(self, *args, **kwargs):
         
         tk.Tk.__init__(self, *args, **kwargs)
@@ -19,7 +19,7 @@ class SeaofBTCapp(tk.Tk):
 
         self.frames = {}
 
-        for F in (StartPage, PageOne, PageTwo):
+        for F in (StartPage, PageOne, menuScreen):
 
             frame = F(container, self)
 
@@ -39,66 +39,57 @@ class StartPage(tk.Frame):
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self,parent)
-        height = 550 
-        width = 350
-       
+        HEIGHT = 550 
+        WIDTH = 350
+        self.ErrorMsg = tk.Label(self, text = "",font=(None,10), fg='red')
+        self.ErrorMsg.place(x = (WIDTH/2),y = 20)
 
         title = tk.Label(self, text = "Shruthik's Quiz Application",font=(None,20),)
-        title.place(x = (width/2 - 30),y = 40)
+        title.place(x = (WIDTH/2 - 30),y = 40)
         user_nameLabel = tk.Label(self, text = "Enter Username: ",font=(None,14))
-        user_nameLabel.place(x = (width/2 + 18),y = 90)
-        Username = tk.Entry(self, text="User Name")
-        Username.place(x = (width/2 - 18),y = 120)
+        user_nameLabel.place(x = (WIDTH/2 + 18),y = 90)
+        self.Username = tk.Entry(self, text="User Name")
+        self.Username.place(x = (WIDTH/2 - 18),y = 120)
         passwordLabel = tk.Label(self, text = "Enter Password: ",font=(None,14))
-        passwordLabel.place(x = (width/2 + 18),y = 175)
-        password = tk.Entry(self, text="Password")
-        password.place(x = (width/2 - 18),y = 210)
+        passwordLabel.place(x = (WIDTH/2 + 18),y = 175)
+        self.Password = tk.Entry(self, text="Password")
+        self.Password.place(x = (WIDTH/2 - 18),y = 210)
         loginBtn = tk.Button(self, text="Log in", height = 3,
-        width = 20, bg="red", command=None, highlightbackground="red" )
-        loginBtn.place(x = (width/2 - 18),y = 250)
+        width = 20, bg="red", command=self.signIn, highlightbackground="red" )
+        loginBtn.place(x = (WIDTH/2 - 18),y = 250)
 
 
-        signup = tk.Button(self, text="Sign up", height = 3, 
+        signup = tk.Button(self, text="Sign Up", height = 3, 
                 width = 15, bg="red",  command=lambda: controller.show_frame(PageOne), highlightbackground="lightblue")
-        signup.place(x = (width/2 + 200),y = 270,)
+        signup.place(x = (WIDTH/2 + 200),y = 270,)
 
 
 
+    def signIn(self):
+        #lambda: controller.show_frame(menuScreen)
+        print(f'Username: f{self.Username.get()} and Password: f{self.Password.get()}')
 
-class PageOne(tk.Frame):
+        conn = sqlite3.connect("data.db")
+        c = conn.cursor()
 
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-        label = tk.Label(self, text="Page One!!!", font=LARGE_FONT)
-        label.pack(pady=10,padx=10)
-
-        button1 = tk.Button(self, text="Back to Home",
-                            command=lambda: controller.show_frame(StartPage))
-        button1.pack()
-
-        button2 = tk.Button(self, text="Page Two",
-                            command=lambda: controller.show_frame(PageTwo))
-        button2.pack()
-
-
-class PageTwo(tk.Frame):
-
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-        label = tk.Label(self, text="Page Two!!!", font=LARGE_FONT)
-        label.pack(pady=10,padx=10)
-
-        button1 = tk.Button(self, text="Back to Home",
-                            command=lambda: controller.show_frame(StartPage))
-        button1.pack()
-
-        button2 = tk.Button(self, text="Page One",
-                            command=lambda: controller.show_frame(PageOne))
-        button2.pack()
+        c.execute("""SELECT * FROM quiz_data""")
+        data = c.fetchall()
+        success = False
         
+        for users in data:
+
+            if users[0].lower() == self.Username.get().lower() and users[1].lower() == self.Password.get().lower():
+                signInAccount(self.Username.get(),self.Password.get())
+                success = True
+                break
+        if not success:
+            self.ErrorMsg.config(text="Incorrect Username or Password")
 
 
-app = SeaofBTCapp()
+
+
+
+app = QuizApp()
 app.title("Shruthik's Quiz Application")
 app.geometry("550x350")
 app.resizable(False, False)
