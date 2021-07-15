@@ -7,7 +7,7 @@ class menuScreen(tk.Frame):
         tk.Frame.__init__(self, parent)
         HEIGHT = 550 
         WIDTH = 350
-       
+        
       
         title = tk.Label(self, text = "Hello World",font=(None,20),)
         title.place(x = (WIDTH/2+40),y = 40)

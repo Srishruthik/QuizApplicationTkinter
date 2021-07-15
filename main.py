@@ -4,6 +4,7 @@ from signup import PageOne
 from database import signInAccount
 LARGE_FONT= ("Verdana", 12)
 from menu import menuScreen
+
 import sqlite3
 class QuizApp(tk.Tk):
     
@@ -38,6 +39,7 @@ class QuizApp(tk.Tk):
 class StartPage(tk.Frame):
 
     def __init__(self, parent, controller):
+        self.controller = controller
         tk.Frame.__init__(self,parent)
         HEIGHT = 550 
         WIDTH = 350
@@ -81,6 +83,9 @@ class StartPage(tk.Frame):
             if users[0].lower() == self.Username.get().lower() and users[1].lower() == self.Password.get().lower():
                 signInAccount(self.Username.get(),self.Password.get())
                 success = True
+                self.controller.show_frame(menuScreen)
+                self.ErrorMsg.config(text="Logging in... ",fg="green")
+                
                 break
         if not success:
             self.ErrorMsg.config(text="Incorrect Username or Password")
